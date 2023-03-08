@@ -120,7 +120,7 @@ export default class SearchMenu extends Component {
     this.loading = false;
     const url = this.fullSearchUrl();
     if (url) {
-      this.sendWidgetEvent("linkClicked");
+      //this.sendWidgetEvent("linkClicked");
       DiscourseURL.routeTo(url);
     }
   }

@@ -62,10 +62,10 @@ export default class InitialOptions extends Component {
   topicContextType() {
     this.slug = this.args.term;
     this.setTopicContext = true;
-    this.label = [
-      h("span", `${this.args.term} `),
-      h("span.label-suffix", I18n.t("search.in_this_topic")),
-    ];
+    //this.label = [
+    //h("span", `${this.args.term} `),
+    //h("span.label-suffix", I18n.t("search.in_this_topic")),
+    //];
   }
 
   privateMessageContextType() {
@@ -122,14 +122,14 @@ export default class InitialOptions extends Component {
 
   userContextType() {
     this.slug = `${this.args.term} @${this.search.searchContext.user.username}`;
-    this.label = [
-      h("span", `${term} `),
-      h(
-        "span.label-suffix",
-        I18n.t("search.in_posts_by", {
-          username: this.search.searchContext.user.username,
-        })
-      ),
-    ];
+    //this.label = [
+    //h("span", `${term} `),
+    //h(
+    //"span.label-suffix",
+    //I18n.t("search.in_posts_by", {
+    //username: this.search.searchContext.user.username,
+    //})
+    //),
+    //];
   }
 }

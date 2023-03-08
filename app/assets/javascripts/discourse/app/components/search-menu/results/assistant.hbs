@@ -1,3 +1,30 @@
 <ul class="search-menu-assistant">
+  {{! suggestion keywords are mapped to SUGGESTION_KEYWORD_MAP }}
+  {{#if (eq this.suggestionType "tag")}}
+    {{#each @results as |result|}}
+      <SearchMenu::Results::AssistantItem
+        {{! we need to figure out how to insert the prefix here dynamically }}
+        @prefix={{this.prefixForResult}}
+        @tag={{result.tagName}}
+        @additionalTags={{result.additionalTags}}
+        category={{result.category}}
+        slug={{@term}}
+        withInLabel={{@withInLabel}}
+        isIntersection={{true}}
+      />
+      {{result}}
+    {{/each}}
+  {{else if (eq this.suggestionType "category")}}
+    {{#each @results as |result|}}
+      {{result}}
+    {{/each}}
+  {{else if (eq this.suggestionType "user")}}
+    {{#each @results as |result|}}
+      {{result}}
 
+    {{/each}}
+
+  {{else}}
+
+  {{/if}}
 </ul>
