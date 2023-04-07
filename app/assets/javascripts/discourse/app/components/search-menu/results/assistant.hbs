@@ -16,14 +16,26 @@
     {{/each}}
   {{else if (eq this.suggestionType "category")}}
     {{#each @results as |result|}}
-      {{result}}
+      {{#if result.model}}
+        <SearchMenu::Results::AssistantItem
+          @prefix={{this.prefix}}
+          @category={{result.model}}
+          @slug={{this.categorySlug}}
+          @withInLabel={{@withInLabel}}
+        />
+      {{else}}
+        <SearchMenu::Results::AssistantItem
+          @prefix={{this.prefix}}
+          @tag={{result.model.name}}
+          @slug={{this.categorySlug}}
+          @withInLabel={{@withInLabel}}
+        />
+      {{/if}}
     {{/each}}
   {{else if (eq this.suggestionType "user")}}
     {{#each @results as |result|}}
       {{result}}
-
     {{/each}}
-
   {{else}}
 
   {{/if}}

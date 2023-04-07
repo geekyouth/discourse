@@ -34,7 +34,7 @@ export default class SearchMenu extends Component {
   @tracked loading = false;
   @tracked results = {};
   @tracked noResults = false;
-  @tracked term;
+  @tracked term = "";
   @tracked inPMInboxContext =
     this.search?.searchContext?.type === "private_messages";
   @tracked typeFilter = DEFAULT_TYPE_FILTER;
@@ -182,6 +182,7 @@ export default class SearchMenu extends Component {
       this.loading = false;
       this.suggestionResults = [];
 
+      console.log(matchSuggestions);
       if (matchSuggestions.type === "category") {
         const categorySearchTerm = matchSuggestions.categoriesMatch[0].replace(
           "#",

@@ -21,8 +21,6 @@ export default class InitialOptions extends Component {
   @service siteSettings;
   @service currentUser;
 
-  term = this.args.term || "";
-
   get termMatch() {
     return this.args.term?.match(MODIFIER_REGEXP) ? true : false;
   }
@@ -45,17 +43,23 @@ export default class InitialOptions extends Component {
   attributesForSearchContextType(type) {
     switch (type) {
       case "topic":
-        return this.topicContextType();
+        this.topicContextType();
+        break;
       case "private_messages":
-        return this.privateMessageContextType();
+        this.privateMessageContextType();
+        break;
       case "category":
-        return this.categoryContextType();
+        this.categoryContextType();
+        break;
       case "tag":
-        return this.tagContextType();
+        this.tagContextType();
+        break;
       case "tagIntersection":
-        return this.tagIntersectionContextType();
+        this.tagIntersectionContextType();
+        break;
       case "user":
-        return this.userContextType();
+        this.userContextType();
+        break;
     }
   }
 
@@ -78,14 +82,15 @@ export default class InitialOptions extends Component {
       ? `#${searchContextCategory.parentCategory.slug}:${searchContextCategory.slug}`
       : `#${searchContextCategory.slug}`;
 
-    this.term = `${this.args.term} ${fullSlug}`;
+    this.contextTypeTerm = `${this.args.term} ${fullSlug}`;
     this.suggestionKeyword = "#";
     this.results = [{ model: this.search.searchContext.category }];
     this.withInLabel = true;
+    console.log(this.results);
   }
 
   tagContextType() {
-    this.term = `${this.args.term} #${this.search.searchContext.name}`;
+    this.contextTypeTerm = `${this.args.term} #${this.search.searchContext.name}`;
     this.suggestionKeyword = "#";
     this.results = [{ name: this.search.searchContext.name }];
     this.withInLabel = true;
@@ -114,7 +119,7 @@ export default class InitialOptions extends Component {
       tagTerm = tagTerm + ` ${categorySlug}`;
     }
 
-    this.term = tagTerm;
+    this.contextTypeTerm = tagTerm;
     this.suggestionKeyword = "+";
     this.results = [suggestionOptions];
     this.withInLabel = true;

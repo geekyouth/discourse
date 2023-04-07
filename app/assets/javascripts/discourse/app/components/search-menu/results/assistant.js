@@ -28,7 +28,6 @@ export default class Assistant extends Component {
   @service currentUser;
   @service siteSettings;
 
-  @tracked suggestionKeyword = this.args.suggestionKeyword;
   suggestionType;
   prefix;
 
@@ -62,15 +61,15 @@ export default class Assistant extends Component {
   }
 
   attributesForSuggestionKeyword() {
-    if (this.suggestionKeyword !== "+") {
+    if (this.args.suggestionKeyword !== "+") {
       this.prefix =
-        this.args.term?.split(this.suggestionKeyword)[0].trim() || "";
+        this.args.term?.split(this.args.suggestionKeyword)[0].trim() || "";
       if (this.prefix.length) {
         this.prefix = `${this.prefix} `;
       }
     }
 
-    switch (this.suggestionKeyword) {
+    switch (this.args.suggestionKeyword) {
       case "+":
         this.args.results.forEach((result) => {
           if (result.additionalTags) {
@@ -94,14 +93,17 @@ export default class Assistant extends Component {
           //})
           //);
         });
-        this.suggestionType = SUGGESTION_KEYWORD_MAP[this.suggestionKeyword];
+        this.suggestionType =
+          SUGGESTION_KEYWORD_MAP[this.args.suggestionKeyword];
         break;
       case "#":
         this.args.results.forEach((item) => {
+          console.log(item);
           if (item.model) {
             const fullSlug = item.model.parentCategory
               ? `#${item.model.parentCategory.slug}:${item.model.slug}`
               : `#${item.model.slug}`;
+            //this.categoryPrefix =
             //content.push(
             //this.attach("search-menu-assistant-item", {
             //prefix: this.prefix,
@@ -121,7 +123,8 @@ export default class Assistant extends Component {
             //);
           }
         });
-        this.suggestionType = SUGGESTION_KEYWORD_MAP[this.suggestionKeyword];
+        this.suggestionType =
+          SUGGESTION_KEYWORD_MAP[this.args.suggestionKeyword];
         break;
       case "@":
         //when only one user matches while in topic
@@ -166,7 +169,8 @@ export default class Assistant extends Component {
             //);
           });
         }
-        this.suggestionType = SUGGESTION_KEYWORD_MAP[this.suggestionKeyword];
+        this.suggestionType =
+          SUGGESTION_KEYWORD_MAP[this.args.suggestionKeyword];
         break;
       default:
         suggestionShortcuts.forEach((item) => {

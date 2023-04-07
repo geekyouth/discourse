@@ -764,6 +764,7 @@ createWidget("search-menu-assistant-item", {
     } else {
       content.push(h("span.search-item-slug", attrs.label || attrs.slug));
     }
+
     if (attrs.extraHint) {
       content.push(h("span.extra-hint", attrs.extraHint));
     }
