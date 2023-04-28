@@ -26,6 +26,7 @@ import autoGroupFlairForUser from "discourse/lib/avatar-flair";
 import showModal from "discourse/lib/show-modal";
 import { nativeShare } from "discourse/lib/pwa-utils";
 import { hideUserTip } from "discourse/lib/user-tips";
+import ShareTopicModal from "discourse/components/modal/share-topic";
 
 function transformWithCallbacks(post) {
   let transformed = transformBasicPost(post);
@@ -410,8 +411,9 @@ createWidget("post-date", {
   showShareModal() {
     const post = this.findAncestorModel();
     const topic = post.topic;
-    const controller = showModal("share-topic", { model: topic.category });
-    controller.setProperties({ topic, post });
+    showModal(ShareTopicModal, {
+      model: { category: topic.category, topic, post },
+    });
   },
 });
 
@@ -630,8 +632,9 @@ createWidget("post-contents", {
     const post = this.findAncestorModel();
     nativeShare(this.capabilities, { url: post.shareUrl }).catch(() => {
       const topic = post.topic;
-      const controller = showModal("share-topic", { model: topic.category });
-      controller.setProperties({ topic, post });
+      showModal(ShareTopicModal, {
+        model: { category: topic.category, topic, post },
+      });
     });
   },
 

@@ -5,6 +5,7 @@ import {
 } from "discourse/models/bookmark";
 import { registerTopicFooterButton } from "discourse/lib/register-topic-footer-button";
 import showModal from "discourse/lib/show-modal";
+import ShareTopicModal from "discourse/components/modal/share-topic";
 
 const SHARE_PRIORITY = 1000;
 const BOOKMARK_PRIORITY = 900;
@@ -27,15 +28,15 @@ export default {
       },
       title: "topic.share.help",
       action() {
-        const controller = showModal("share-topic", {
-          model: this.topic.category,
-        });
-        controller.setProperties({
-          allowInvites:
-            this.currentUser.can_invite_to_forum &&
-            this.canInviteTo &&
-            !this.inviteDisabled,
-          topic: this.topic,
+        showModal(ShareTopicModal, {
+          model: {
+            category: this.topic.category,
+            topic: this.topic,
+            allowInvites:
+              this.currentUser.can_invite_to_forum &&
+              this.canInviteTo &&
+              !this.inviteDisabled,
+          },
         });
       },
       dropdown() {

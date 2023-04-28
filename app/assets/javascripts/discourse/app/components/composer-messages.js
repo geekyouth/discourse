@@ -307,15 +307,16 @@ export default class ComposerMessages extends Component {
   @action
   shareModal() {
     const { topic } = this.composer;
-    const controller = showModal("share-topic", { model: topic.category });
-
-    controller.setProperties({
-      allowInvites:
-        topic.details.can_invite_to &&
-        !topic.archived &&
-        !topic.closed &&
-        !topic.deleted,
-      topic,
+    showModal("share-topic", {
+      model: {
+        topic,
+        category: topic.category,
+        allowInvites:
+          topic.details.can_invite_to &&
+          !topic.archived &&
+          !topic.closed &&
+          !topic.deleted,
+      },
     });
   }
 
