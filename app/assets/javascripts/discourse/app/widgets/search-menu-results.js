@@ -224,6 +224,7 @@ createSearchResult({
   },
 });
 
+// THESE MAP TO RESULTS/TYPE/FOO
 createSearchResult({
   type: "topic",
   linkField: "url",
