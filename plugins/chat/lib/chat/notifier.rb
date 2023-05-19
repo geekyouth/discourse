@@ -74,8 +74,6 @@ module Chat
       end
 
       notify_creator_of_inaccessible_mentions(to_notify)
-
-      notify_mentioned_users(to_notify)
       notify_watching_users(except: mentioned_user_ids << @user.id)
 
       to_notify
