@@ -16,7 +16,18 @@ module Jobs
           to_notify = ::Chat::Notifier.new(message, timestamp).notify_new
           notify_mentioned_users(message.id, timestamp, to_notify)
         elsif reason == "edit"
-          ::Chat::Notifier.new(message, timestamp).notify_edit
+          already_notified_user_ids =
+            ::Chat::Mention
+              .where(chat_message: message)
+              .where.not(notification: nil)
+              .pluck(:user_id)
+          to_notify = ::Chat::Notifier.new(message, timestamp).notify_edit
+          notify_mentioned_users(
+            message.id,
+            timestamp,
+            to_notify,
+            already_notified_user_ids: already_notified_user_ids,
+          )
         end
       end
 

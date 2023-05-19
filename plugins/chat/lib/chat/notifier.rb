@@ -92,7 +92,6 @@ module Chat
       return if needs_notification_ids.blank?
 
       notify_creator_of_inaccessible_mentions(to_notify)
-      notify_mentioned_users(to_notify, already_notified_user_ids: already_notified_user_ids)
 
       to_notify
     end
@@ -290,18 +289,6 @@ module Chat
       already_covered_ids.reject! do |already_covered|
         screener.ignoring_or_muting_actor?(already_covered)
       end
-    end
-
-    def notify_mentioned_users(to_notify, already_notified_user_ids: [])
-      Jobs.enqueue(
-        Jobs::Chat::NotifyMentioned,
-        {
-          chat_message_id: @chat_message.id,
-          to_notify_ids_map: to_notify.as_json,
-          already_notified_user_ids: already_notified_user_ids,
-          timestamp: @timestamp,
-        },
-      )
     end
 
     def notify_watching_users(except: [])
