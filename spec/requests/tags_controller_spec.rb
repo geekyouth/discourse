@@ -771,6 +771,7 @@ RSpec.describe TagsController do
         all_tag_topic
 
         get "/tag/#{tag.name}/l/latest.json", params: { additional_tag_ids: other_tag.name }
+        pp response
 
         expect(response.status).to eq(200)
 

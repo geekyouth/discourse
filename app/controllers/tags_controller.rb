@@ -509,6 +509,7 @@ class TagsController < ::ApplicationController
     method = url_method(opts)
 
     begin
+      debugger
       url = public_send(method, opts)
     rescue ActionController::UrlGenerationError
       raise Discourse::NotFound
