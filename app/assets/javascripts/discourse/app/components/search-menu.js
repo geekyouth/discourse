@@ -35,7 +35,7 @@ export default class SearchMenu extends Component {
   @tracked results = {};
   @tracked noResults = false;
   @tracked inPMInboxContext =
-    this.search?.searchContext?.type === "private_messages";
+    this.search.searchContext?.type === "private_messages";
   @tracked typeFilter = DEFAULT_TYPE_FILTER;
   @tracked suggestionKeyword = false;
   @tracked suggestionResults = [];
@@ -43,14 +43,9 @@ export default class SearchMenu extends Component {
   _debouncer = null;
   _activeSearch = null;
 
-  constructor() {
-    super(...arguments);
-  }
-
   get searchContext() {
-    //THIS DOES NOT EXIST AND NEEDS TO BE DUPDATD
     if (this.inTopicContext || this.inPMInboxContext) {
-      //return this.search.searchContext;
+      return this.search.searchContext;
     }
 
     return false;
@@ -171,7 +166,7 @@ export default class SearchMenu extends Component {
   perform() {
     this.cancel();
 
-    const searchContext = this.searchContext();
+    const searchContext = this.searchContext;
     const fullSearchUrl = this.fullSearchUrl();
     const matchSuggestions = this.matchesSuggestions();
 
@@ -244,8 +239,9 @@ export default class SearchMenu extends Component {
       this._activeSearch = searchForTerm(this.search.activeGlobalSearchTerm, {
         typeFilter: this.typeFilter,
         fullSearchUrl: this.fullSearchUrl,
-        searchContext,
+        searchContext: this.searchContext,
       });
+
       this._activeSearch
         .then((results) => {
           // we ensure the current search term is the one used
