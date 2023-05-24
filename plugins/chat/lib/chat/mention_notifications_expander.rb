@@ -32,42 +32,6 @@ module Chat
 
     private
 
-    def expand_global_mention(to_notify, already_covered_ids)
-      has_all_mention = @parsed_mentions.has_global_mention
-
-      if has_all_mention && @chat_channel.allow_channel_wide_mentions
-        to_notify[:global_mentions] = @parsed_mentions
-          .global_mentions
-          .not_suspended
-          .where(user_options: { ignore_channel_wide_mention: [false, nil] })
-          .where.not(username_lower: @acting_user.username_lower)
-          .where.not(id: already_covered_ids)
-          .pluck(:id)
-
-        already_covered_ids.concat(to_notify[:global_mentions])
-      else
-        to_notify[:global_mentions] = []
-      end
-    end
-
-    def expand_here_mention(to_notify, already_covered_ids)
-      has_here_mention = @parsed_mentions.has_here_mention
-
-      if has_here_mention && @chat_channel.allow_channel_wide_mentions
-        to_notify[:here_mentions] = @parsed_mentions
-          .here_mentions
-          .not_suspended
-          .where(user_options: { ignore_channel_wide_mention: [false, nil] })
-          .where.not(username_lower: @acting_user.username_lower)
-          .where.not(id: already_covered_ids)
-          .pluck(:id)
-
-        already_covered_ids.concat(to_notify[:here_mentions])
-      else
-        to_notify[:here_mentions] = []
-      end
-    end
-
     def expand_direct_mentions(to_notify, already_covered_ids, skip)
       if skip
         direct_mentions = []
@@ -119,27 +83,40 @@ module Chat
       to_notify[:unreachable] = to_notify[:unreachable].concat(grouped[:unreachable])
     end
 
-    def group_users_to_notify(users)
-      potential_participants, unreachable =
-        users.partition do |user|
-          guardian = Guardian.new(user)
-          guardian.can_chat? && guardian.can_join_chat_channel?(@chat_channel)
-        end
+    def expand_global_mention(to_notify, already_covered_ids)
+      has_all_mention = @parsed_mentions.has_global_mention
 
-      participants, welcome_to_join =
-        potential_participants.partition do |participant|
-          participant.user_chat_channel_memberships.any? do |m|
-            predicate = m.chat_channel_id == @chat_channel.id
-            predicate = predicate && m.following == true if @chat_channel.public_channel?
-            predicate
-          end
-        end
+      if has_all_mention && @chat_channel.allow_channel_wide_mentions
+        to_notify[:global_mentions] = @parsed_mentions
+          .global_mentions
+          .not_suspended
+          .where(user_options: { ignore_channel_wide_mention: [false, nil] })
+          .where.not(username_lower: @acting_user.username_lower)
+          .where.not(id: already_covered_ids)
+          .pluck(:id)
 
-      {
-        already_participating: participants || [],
-        welcome_to_join: welcome_to_join || [],
-        unreachable: unreachable || [],
-      }
+        already_covered_ids.concat(to_notify[:global_mentions])
+      else
+        to_notify[:global_mentions] = []
+      end
+    end
+
+    def expand_here_mention(to_notify, already_covered_ids)
+      has_here_mention = @parsed_mentions.has_here_mention
+
+      if has_here_mention && @chat_channel.allow_channel_wide_mentions
+        to_notify[:here_mentions] = @parsed_mentions
+          .here_mentions
+          .not_suspended
+          .where(user_options: { ignore_channel_wide_mention: [false, nil] })
+          .where.not(username_lower: @acting_user.username_lower)
+          .where.not(id: already_covered_ids)
+          .pluck(:id)
+
+        already_covered_ids.concat(to_notify[:here_mentions])
+      else
+        to_notify[:here_mentions] = []
+      end
     end
 
     # Filters out users from global, here, group, and direct mentions that are
@@ -166,6 +143,29 @@ module Chat
       already_covered_ids.reject! do |already_covered|
         screener.ignoring_or_muting_actor?(already_covered)
       end
+    end
+
+    def group_users_to_notify(users)
+      potential_participants, unreachable =
+        users.partition do |user|
+          guardian = Guardian.new(user)
+          guardian.can_chat? && guardian.can_join_chat_channel?(@chat_channel)
+        end
+
+      participants, welcome_to_join =
+        potential_participants.partition do |participant|
+          participant.user_chat_channel_memberships.any? do |m|
+            predicate = m.chat_channel_id == @chat_channel.id
+            predicate = predicate && m.following == true if @chat_channel.public_channel?
+            predicate
+          end
+        end
+
+      {
+        already_participating: participants || [],
+        welcome_to_join: welcome_to_join || [],
+        unreachable: unreachable || [],
+      }
     end
   end
 end

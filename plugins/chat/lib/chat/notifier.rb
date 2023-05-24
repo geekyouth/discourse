@@ -62,12 +62,15 @@ module Chat
       @timestamp = timestamp
       @chat_channel = @chat_message.chat_channel
       @user = @chat_message.user
+
+      @mention_notifications_expander =
+        MentionNotificationsExpander.new(@parsed_mentions, @chat_channel, @user)
     end
 
     ### Public API
 
     def notify_new
-      to_notify = list_users_to_notify
+      to_notify = @mention_notifications_expander.expand
       mentioned_user_ids = to_notify.extract!(:all_mentioned_user_ids)[:all_mentioned_user_ids]
 
       mentioned_user_ids.each do |member_id|
@@ -89,7 +92,7 @@ module Chat
           .where.not(notification: nil)
           .pluck(:user_id)
 
-      to_notify = list_users_to_notify
+      to_notify = @mention_notifications_expander.expand
       mentioned_user_ids = to_notify.extract!(:all_mentioned_user_ids)[:all_mentioned_user_ids]
       needs_notification_ids = mentioned_user_ids - already_notified_user_ids
       return if needs_notification_ids.blank?
@@ -101,10 +104,6 @@ module Chat
     end
 
     private
-
-    def list_users_to_notify
-      MentionNotificationsExpander.new(@parsed_mentions, @chat_channel, @user).expand
-    end
 
     def notify_creator_of_inaccessible_mentions(to_notify)
       inaccessible = to_notify.extract!(:unreachable, :welcome_to_join)
