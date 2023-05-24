@@ -62,7 +62,7 @@ export default class SearchMenu extends Component {
       query += `q=${encodeURIComponent(this.search.activeGlobalSearchTerm)}`;
 
       if (this.searchContext?.type === "topic") {
-        query += encodeURIComponent(` topic:${searchContext.id}`);
+        query += encodeURIComponent(` topic:${this.searchContext.id}`);
       } else if (this.searchContext?.type === "private_messages") {
         query += encodeURIComponent(` in:messages`);
       }
@@ -166,7 +166,6 @@ export default class SearchMenu extends Component {
   perform() {
     this.cancel();
 
-    const searchContext = this.searchContext;
     const fullSearchUrl = this.fullSearchUrl();
     const matchSuggestions = this.matchesSuggestions();
 
@@ -247,7 +246,7 @@ export default class SearchMenu extends Component {
           // we ensure the current search term is the one used
           // when starting the query
           if (results) {
-            if (searchContext) {
+            if (this.searchContext) {
               this.appEvents.trigger("post-stream:refresh", {
                 force: true,
               });
