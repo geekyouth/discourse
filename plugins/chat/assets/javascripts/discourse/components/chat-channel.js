@@ -21,6 +21,7 @@ import {
 import isZoomed from "discourse/plugins/chat/discourse/lib/zoom-check";
 import { tracked } from "@glimmer/tracking";
 import discourseDebounce from "discourse-common/lib/debounce";
+import User from "discourse/models/user";
 
 const PAGE_SIZE = 50;
 const PAST = "past";
@@ -673,6 +674,7 @@ export default class ChatLivePane extends Component {
       );
     }
 
+    this.attachMentionedUsers(message);
     this.args.channel.stageMessage(message);
     this.resetComposer();
 
@@ -702,6 +704,27 @@ export default class ChatLivePane extends Component {
         this.chatDraftsManager.remove({ channelId: this.args.channel.id });
         this.chatChannelPane.sending = false;
       });
+  }
+
+  attachMentionedUsers(message) {
+    const user1 = User.create({
+      id: 2,
+      username: "andrei1",
+      status: {
+        description: "surfing",
+        emoji: "surfing_man",
+      },
+    });
+    message.mentionedUsers.set(user1.id, user1);
+    const user2 = User.create({
+      id: 1,
+      username: "admin1",
+      status: {
+        description: "tea break",
+        emoji: "tea",
+      },
+    });
+    message.mentionedUsers.set(user2.id, user2);
   }
 
   async _upsertChannelWithMessage(channel, data) {
