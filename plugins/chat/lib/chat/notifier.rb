@@ -161,14 +161,14 @@ module Chat
     end
 
     def group_users_to_notify(users)
-      potential_participants, unreachable =
+      potential_members, unreachable =
         users.partition { |user| @chat_channel.can_be_joined_by?(user) }
 
-      participants, welcome_to_join =
-        potential_participants.partition { |user| @chat_channel.joined_by?(user) }
+      members, welcome_to_join =
+        potential_members.partition { |user| @chat_channel.joined_by?(user) }
 
       {
-        already_participating: participants || [],
+        members: members || [],
         welcome_to_join: welcome_to_join || [],
         unreachable: unreachable || [],
       }
@@ -188,7 +188,7 @@ module Chat
 
       grouped = group_users_to_notify(direct_mentions)
 
-      to_notify[:direct_mentions] = grouped[:already_participating].map(&:id)
+      to_notify[:direct_mentions] = grouped[:members].map(&:id)
       to_notify[:welcome_to_join] = grouped[:welcome_to_join]
       to_notify[:unreachable] = grouped[:unreachable]
       already_covered_ids.concat(to_notify[:direct_mentions])
@@ -208,7 +208,7 @@ module Chat
       @parsed_mentions.groups_to_mention.each { |g| to_notify[g.name.downcase] = [] }
 
       grouped = group_users_to_notify(reached_by_group)
-      grouped[:already_participating].each do |user|
+      grouped[:members].each do |user|
         # When a user is a member of multiple mentioned groups,
         # the most far to the left should take precedence.
         ordered_group_names =
