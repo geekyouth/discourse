@@ -112,6 +112,14 @@ module Chat
       guardian.can_chat? && guardian.can_join_chat_channel?(self)
     end
 
+    def joined_by?(user)
+      user.user_chat_channel_memberships.any? do |membership|
+        predicate = membership.chat_channel_id == id
+        predicate = predicate && membership.following == true if public_channel?
+        predicate
+      end
+    end
+
     # TODO (martin) Move Jobs::Chat::UpdateUserCountsForChannels into here
     def self.update_counts
       # NOTE: Chat::Channel#messages_count is not updated every time
