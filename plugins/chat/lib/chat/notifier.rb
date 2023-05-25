@@ -162,10 +162,7 @@ module Chat
 
     def group_users_to_notify(users)
       potential_participants, unreachable =
-        users.partition do |user|
-          guardian = Guardian.new(user)
-          guardian.can_chat? && guardian.can_join_chat_channel?(@chat_channel)
-        end
+        users.partition { |user| @chat_channel.can_be_joined_by?(user) }
 
       participants, welcome_to_join =
         potential_participants.partition do |participant|

@@ -107,6 +107,11 @@ module Chat
       update_counts
     end
 
+    def can_be_joined_by?(user)
+      guardian = Guardian.new(user)
+      guardian.can_chat? && guardian.can_join_chat_channel?(self)
+    end
+
     # TODO (martin) Move Jobs::Chat::UpdateUserCountsForChannels into here
     def self.update_counts
       # NOTE: Chat::Channel#messages_count is not updated every time
