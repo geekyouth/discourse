@@ -228,11 +228,11 @@ export default class Results extends Component {
     return !this.search.activeGlobalSearchTerm && !this.args.inPMInboxContext;
   }
 
-  get renderNoResults() {
+  get noTopicResults() {
     return this.args.searchTopics && this.args.noResults;
   }
 
-  get renderTooShort() {
+  get termTooShort() {
     return this.args.searchTopics && this.args.invalidTerm;
   }
 
